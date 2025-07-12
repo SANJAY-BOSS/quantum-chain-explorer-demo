@@ -28,5 +28,5 @@ export interface BlockchainState {
   cryptoMode: 'classical' | 'post-quantum';
   totalBlocks: number;
   totalTransactions: number;
-  isming: boolean;
+  isMining: boolean;
 }

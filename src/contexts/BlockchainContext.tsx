@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { Block, Transaction, BlockchainState } from '../types/blockchain';
 import { createGenesisBlock, createNewBlock, calculateHash } from '../utils/blockchain';
@@ -44,7 +43,7 @@ const blockchainReducer = (state: BlockchainState, action: BlockchainAction): Bl
         chain: [...state.chain, newBlock],
         pendingTransactions: [],
         totalBlocks: state.totalBlocks + 1,
-        ismining: false,
+        isMining: false,
       };
     
     case 'RESET_CHAIN':
@@ -55,7 +54,7 @@ const blockchainReducer = (state: BlockchainState, action: BlockchainAction): Bl
         cryptoMode: 'post-quantum',
         totalBlocks: 1,
         totalTransactions: 0,
-        ismining: false,
+        isMining: false,
       };
     
     case 'TOGGLE_CRYPTO_MODE':
@@ -67,7 +66,7 @@ const blockchainReducer = (state: BlockchainState, action: BlockchainAction): Bl
     case 'SET_MINING':
       return {
         ...state,
-        ismining: action.payload,
+        isMining: action.payload,
       };
     
     default:
@@ -81,7 +80,7 @@ const initialState: BlockchainState = {
   cryptoMode: 'post-quantum',
   totalBlocks: 1,
   totalTransactions: 0,
-  ismining: false,
+  isMining: false,
 };
 
 export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
@@ -90,7 +89,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
   // Auto-mine blocks every 30 seconds if there are pending transactions
   useEffect(() => {
     const interval = setInterval(() => {
-      if (state.pendingTransactions.length > 0 && !state.ismining) {
+      if (state.pendingTransactions.length > 0 && !state.isMining) {
         dispatch({ type: 'SET_MINING', payload: true });
         setTimeout(() => {
           dispatch({ type: 'MINE_BLOCK' });
@@ -99,7 +98,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [state.pendingTransactions.length, state.ismining]);
+  }, [state.pendingTransactions.length, state.isMining]);
 
   const addTransaction = (transactionData: Omit<Transaction, 'id' | 'timestamp'>): string => {
     const transaction: Transaction = {
@@ -113,7 +112,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const mineBlock = () => {
-    if (!state.ismining && state.pendingTransactions.length > 0) {
+    if (!state.isMining && state.pendingTransactions.length > 0) {
       dispatch({ type: 'SET_MINING', payload: true });
       setTimeout(() => {
         dispatch({ type: 'MINE_BLOCK' });

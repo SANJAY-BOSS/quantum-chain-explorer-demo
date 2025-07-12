@@ -1,4 +1,3 @@
-
 import { Shield, Zap, Lock, Globe, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,7 +35,7 @@ const Home = () => {
     { label: 'Total Blocks', value: state.totalBlocks },
     { label: 'Total Transactions', value: state.totalTransactions },
     { label: 'Crypto Mode', value: state.cryptoMode === 'post-quantum' ? 'Post-Quantum' : 'Classical' },
-    { label: 'Status', value: state.ismining ? 'Mining' : 'Active' },
+    { label: 'Status', value: state.isMining ? 'Mining' : 'Active' },
   ];
 
   return (

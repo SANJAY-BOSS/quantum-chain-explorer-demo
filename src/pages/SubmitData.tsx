@@ -130,7 +130,7 @@ const SubmitData = () => {
                 <div>
                   <h3 className="font-semibold text-blue-900">Network Status</h3>
                   <p className="text-sm text-blue-700">
-                    {state.isming ? 'Mining new block...' : 'Ready to accept transactions'}
+                    {state.isMining ? 'Mining new block...' : 'Ready to accept transactions'}
                   </p>
                 </div>
               </div>
