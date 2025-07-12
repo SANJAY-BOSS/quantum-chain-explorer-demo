@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,8 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Explorer from "./pages/Explorer";
+import Auth from "./pages/Auth";
+import DataManager from "./pages/DataManager";
 import SubmitData from "./pages/SubmitData";
 import VerifyData from "./pages/VerifyData";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -29,6 +30,8 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/explorer" element={<Explorer />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/data-manager" element={<DataManager />} />
               <Route path="/submit" element={<SubmitData />} />
               <Route path="/verify" element={<VerifyData />} />
               <Route path="/admin" element={<AdminDashboard />} />

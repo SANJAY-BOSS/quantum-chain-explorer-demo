@@ -14,7 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blockchain_audit: {
+        Row: {
+          action_type: string
+          blockchain_response: Json | null
+          error_message: string | null
+          hash_verified: string | null
+          id: string
+          record_id: string | null
+          success: boolean
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          blockchain_response?: Json | null
+          error_message?: string | null
+          hash_verified?: string | null
+          id?: string
+          record_id?: string | null
+          success: boolean
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          blockchain_response?: Json | null
+          error_message?: string | null
+          hash_verified?: string | null
+          id?: string
+          record_id?: string | null
+          success?: boolean
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blockchain_audit_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "data_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blockchain_state: {
+        Row: {
+          chain_data: Json
+          crypto_mode: string
+          id: string
+          is_mining: boolean | null
+          last_updated: string
+          pending_transactions: Json | null
+          total_blocks: number | null
+          total_transactions: number | null
+        }
+        Insert: {
+          chain_data: Json
+          crypto_mode?: string
+          id?: string
+          is_mining?: boolean | null
+          last_updated?: string
+          pending_transactions?: Json | null
+          total_blocks?: number | null
+          total_transactions?: number | null
+        }
+        Update: {
+          chain_data?: Json
+          crypto_mode?: string
+          id?: string
+          is_mining?: boolean | null
+          last_updated?: string
+          pending_transactions?: Json | null
+          total_blocks?: number | null
+          total_transactions?: number | null
+        }
+        Relationships: []
+      }
+      data_records: {
+        Row: {
+          blockchain_hash: string | null
+          blockchain_verified: boolean | null
+          content: string
+          created_at: string
+          data_hash: string
+          id: string
+          metadata: Json | null
+          record_type: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          blockchain_hash?: string | null
+          blockchain_verified?: boolean | null
+          content: string
+          created_at?: string
+          data_hash: string
+          id?: string
+          metadata?: Json | null
+          record_type: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          blockchain_hash?: string | null
+          blockchain_verified?: boolean | null
+          content?: string
+          created_at?: string
+          data_hash?: string
+          id?: string
+          metadata?: Json | null
+          record_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
