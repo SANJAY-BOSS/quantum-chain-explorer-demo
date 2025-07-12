@@ -142,8 +142,8 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
       if (data && data.length > 0) {
         const savedState = data[0];
         const loadedState: BlockchainState = {
-          chain: savedState.chain_data as Block[],
-          pendingTransactions: savedState.pending_transactions as Transaction[] || [],
+          chain: (savedState.chain_data as unknown) as Block[],
+          pendingTransactions: (savedState.pending_transactions as unknown) as Transaction[] || [],
           cryptoMode: savedState.crypto_mode as 'classical' | 'post-quantum',
           totalBlocks: savedState.total_blocks || 1,
           totalTransactions: savedState.total_transactions || 0,
@@ -161,8 +161,8 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabase
         .from('blockchain_state')
         .upsert({
-          chain_data: state.chain,
-          pending_transactions: state.pendingTransactions,
+          chain_data: state.chain as any,
+          pending_transactions: state.pendingTransactions as any,
           crypto_mode: state.cryptoMode,
           total_blocks: state.totalBlocks,
           total_transactions: state.totalTransactions,

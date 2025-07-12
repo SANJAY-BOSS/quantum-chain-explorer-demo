@@ -55,8 +55,8 @@ const SubmitData = () => {
         ? 'CRYSTALS-Dilithium-5' 
         : 'ECDSA-P256';
 
-      // Add transaction to blockchain
-      const transactionId = addTransaction({
+      // Add transaction to blockchain - await the Promise
+      const transactionId = await addTransaction({
         sender: formData.sender,
         dataHash,
         data: formData.data,
