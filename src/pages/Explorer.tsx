@@ -85,8 +85,8 @@ const Explorer = () => {
                 <Clock className="h-8 w-8 text-orange-600 mr-3" />
                 <div>
                   <p className="text-sm text-gray-500">Status</p>
-                  <Badge className={state.isming ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
-                    {state.isming ? 'Mining' : 'Active'}
+                  <Badge className={state.isMining ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
+                    {state.isMining ? 'Mining' : 'Active'}
                   </Badge>
                 </div>
               </div>

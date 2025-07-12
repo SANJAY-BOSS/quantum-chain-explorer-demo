@@ -142,10 +142,10 @@ const AdminDashboard = () => {
                 
                 <Button
                   onClick={handleMineBlock}
-                  disabled={state.isming || state.pendingTransactions.length === 0}
+                  disabled={state.isMining || state.pendingTransactions.length === 0}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                 >
-                  {state.isming ? (
+                  {state.isMining ? (
                     <>
                       <Activity className="w-4 h-4 mr-2 animate-spin" />
                       Mining in Progress...
