@@ -1,8 +1,8 @@
-
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useBlockchain } from '../contexts/BlockchainContext';
 import { User, LogOut, Database } from 'lucide-react';
+import DarkModeToggle from './DarkModeToggle';
 
 const Header = () => {
   const { isAuthenticated, user, signOut } = useBlockchain();
@@ -14,7 +14,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-white dark:bg-gray-900 shadow-sm border-b dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
@@ -26,27 +26,33 @@ const Header = () => {
             </Link>
             
             <nav className="hidden md:flex space-x-6">
-              <Link to="/" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+              <Link to="/" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                 Home
               </Link>
-              <Link to="/about" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+              <Link to="/about" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                 About
               </Link>
-              <Link to="/explorer" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+              <Link to="/explorer" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                 Explorer
+              </Link>
+              <Link to="/learn" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
+                Learn PQC
               </Link>
               {isAuthenticated && (
                 <>
-                  <Link to="/data-manager" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+                  <Link to="/dashboard" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
+                    Dashboard
+                  </Link>
+                  <Link to="/data-manager" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                     Data Manager
                   </Link>
-                  <Link to="/submit" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+                  <Link to="/submit" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                     Submit Data
                   </Link>
-                  <Link to="/verify" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+                  <Link to="/verify" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                     Verify Data
                   </Link>
-                  <Link to="/admin" className="text-gray-600 hover:text-gray-900 px-3 py-2">
+                  <Link to="/admin" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2">
                     Admin
                   </Link>
                 </>
@@ -55,11 +61,12 @@ const Header = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <DarkModeToggle />
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2 text-sm">
-                  <User className="h-4 w-4 text-gray-500" />
-                  <span className="text-gray-600">{user?.email}</span>
+                  <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <span className="text-gray-600 dark:text-gray-300">{user?.email}</span>
                 </div>
                 <Button variant="outline" size="sm" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4 mr-1" />

@@ -91,6 +91,48 @@ export type Database = {
         }
         Relationships: []
       }
+      blocks: {
+        Row: {
+          created_at: string
+          data: string
+          difficulty: number
+          hash: string
+          id: string
+          index: number
+          merkle_root: string
+          nonce: number
+          previous_hash: string
+          signature: string
+          timestamp: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          difficulty: number
+          hash: string
+          id: string
+          index: number
+          merkle_root: string
+          nonce: number
+          previous_hash: string
+          signature: string
+          timestamp: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          difficulty?: number
+          hash?: string
+          id?: string
+          index?: number
+          merkle_root?: string
+          nonce?: number
+          previous_hash?: string
+          signature?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
       data_records: {
         Row: {
           blockchain_hash: string | null
@@ -130,6 +172,48 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number | null
+          block_id: string | null
+          created_at: string
+          data: string
+          hash: string
+          id: string
+          receiver: string
+          sender: string
+          signature: string
+          timestamp: string
+          verified: boolean
+        }
+        Insert: {
+          amount?: number | null
+          block_id?: string | null
+          created_at?: string
+          data: string
+          hash: string
+          id: string
+          receiver: string
+          sender: string
+          signature: string
+          timestamp: string
+          verified?: boolean
+        }
+        Update: {
+          amount?: number | null
+          block_id?: string | null
+          created_at?: string
+          data?: string
+          hash?: string
+          id?: string
+          receiver?: string
+          sender?: string
+          signature?: string
+          timestamp?: string
+          verified?: boolean
         }
         Relationships: []
       }
