@@ -108,6 +108,11 @@ const Dashboard: React.FC = () => {
     );
   }
 
+  // Add safety checks for blockchain state
+  if (!state || !state.chain || !Array.isArray(state.chain)) {
+    console.warn('Blockchain state is not properly initialized');
+  }
+
   return (
     <div className="space-y-6">
       {/* Overview Cards */}
@@ -175,14 +180,14 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Network Stats (for admins) */}
-      {hasRole('admin') && (
+      {hasRole('admin') && state && state.chain && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="bg-gradient-to-r from-green-50 to-emerald-50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Network Blocks</p>
-                  <p className="text-2xl font-bold text-green-700">{state.totalBlocks}</p>
+                  <p className="text-2xl font-bold text-green-700">{state.totalBlocks || state.chain.length}</p>
                 </div>
                 <Database className="h-6 w-6 text-green-600" />
               </div>
@@ -194,7 +199,7 @@ const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Total Transactions</p>
-                  <p className="text-2xl font-bold text-purple-700">{state.totalTransactions}</p>
+                  <p className="text-2xl font-bold text-purple-700">{state.totalTransactions || 0}</p>
                 </div>
                 <TrendingUp className="h-6 w-6 text-purple-600" />
               </div>

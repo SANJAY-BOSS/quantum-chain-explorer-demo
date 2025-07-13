@@ -14,8 +14,22 @@ const AdminDashboard = () => {
   const { state, mineBlock, resetChain, toggleCryptoMode } = useBlockchain();
   const { toast } = useToast();
 
+  // Add safety checks for blockchain state
+  if (!state || !state.chain || !Array.isArray(state.chain)) {
+    return (
+      <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-2">Loading blockchain state...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleMineBlock = () => {
-    if (state.pendingTransactions.length === 0) {
+    if (!state.pendingTransactions || state.pendingTransactions.length === 0) {
       toast({
         title: "No Pending Transactions",
         description: "There are no transactions to mine into a new block.",
@@ -50,25 +64,26 @@ const AdminDashboard = () => {
   };
 
   const blockchainIntegrity = verifyBlockchain(state.chain);
+  const pendingTransactionsCount = state.pendingTransactions ? state.pendingTransactions.length : 0;
 
   const systemStats = [
     {
       title: "Total Blocks",
-      value: state.totalBlocks,
+      value: state.totalBlocks || state.chain.length,
       icon: Database,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       title: "Total Transactions",
-      value: state.totalTransactions,
+      value: state.totalTransactions || 0,
       icon: TrendingUp,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       title: "Pending Transactions",
-      value: state.pendingTransactions.length,
+      value: pendingTransactionsCount,
       icon: Clock,
       color: "text-yellow-600",
       bgColor: "bg-yellow-50",
@@ -88,9 +103,15 @@ const AdminDashboard = () => {
     { name: "Proof of Work", active: state.cryptoMode === 'classical' },
   ];
 
-  const recentBlocks = [...state.chain].reverse().slice(0, 5);
+  // Safely get recent blocks with proper filtering
+  const recentBlocks = state.chain
+    .filter(block => block && typeof block === 'object' && block.index !== undefined)
+    .slice()
+    .reverse()
+    .slice(0, 5);
 
   const formatTimestamp = (timestamp: number) => {
+    if (!timestamp) return 'Invalid Date';
     return new Date(timestamp).toLocaleString();
   };
 
@@ -142,7 +163,7 @@ const AdminDashboard = () => {
                 
                 <Button
                   onClick={handleMineBlock}
-                  disabled={state.isMining || state.pendingTransactions.length === 0}
+                  disabled={state.isMining || pendingTransactionsCount === 0}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                 >
                   {state.isMining ? (
@@ -153,7 +174,7 @@ const AdminDashboard = () => {
                   ) : (
                     <>
                       <Zap className="w-4 h-4 mr-2" />
-                      Mine New Block ({state.pendingTransactions.length} pending)
+                      Mine New Block ({pendingTransactionsCount} pending)
                     </>
                   )}
                 </Button>
@@ -286,38 +307,45 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4 max-h-96 overflow-y-auto">
-                {recentBlocks.map((block) => (
-                  <div key={block.index} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h4 className="font-semibold">Block #{block.index}</h4>
-                        <p className="text-xs text-gray-500">{formatTimestamp(block.timestamp)}</p>
+                {recentBlocks.length > 0 ? (
+                  recentBlocks.map((block) => (
+                    <div key={block.index} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-semibold">Block #{block.index}</h4>
+                          <p className="text-xs text-gray-500">{formatTimestamp(block.timestamp)}</p>
+                        </div>
+                        <Badge className={block.cryptoMode === 'post-quantum' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}>
+                          {block.cryptoMode === 'post-quantum' ? 'PQC' : 'Classical'}
+                        </Badge>
                       </div>
-                      <Badge className={block.cryptoMode === 'post-quantum' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}>
-                        {block.cryptoMode === 'post-quantum' ? 'PQC' : 'Classical'}
-                      </Badge>
+                      
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Hash:</span>
+                          <span className="font-mono">{block.hash ? block.hash.substring(0, 12) + '...' : 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Transactions:</span>
+                          <span>{block.transactions ? block.transactions.length : 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Validator:</span>
+                          <span>{block.validator || 'Unknown'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Consensus:</span>
+                          <span className="text-xs">{block.consensusAlgorithm || 'N/A'}</span>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <div className="space-y-1 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Hash:</span>
-                        <span className="font-mono">{block.hash.substring(0, 12)}...</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Transactions:</span>
-                        <span>{block.transactions.length}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Validator:</span>
-                        <span>{block.validator}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Consensus:</span>
-                        <span className="text-xs">{block.consensusAlgorithm}</span>
-                      </div>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <Database className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No blocks available</p>
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>
