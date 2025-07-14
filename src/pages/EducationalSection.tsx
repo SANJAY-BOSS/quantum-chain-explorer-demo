@@ -243,6 +243,158 @@ const EducationalSection = () => {
           </CardContent>
         </Card>
 
+        {/* Quantum Computer Timeline */}
+        <Card className="mb-12 bg-gradient-to-r from-red-50 to-orange-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-orange-600" />
+              Quantum Computing Timeline & Threat Assessment
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="font-semibold mb-4 text-lg">Current State (2024)</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="text-sm">IBM's Largest Quantum Computer:</span>
+                    <Badge className="bg-blue-100 text-blue-800">1,121 qubits</Badge>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="text-sm">Google's Quantum Supremacy:</span>
+                    <Badge className="bg-green-100 text-green-800">70 qubits</Badge>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+                    <span className="text-sm">Cryptographically Relevant:</span>
+                    <Badge className="bg-red-100 text-red-800">4,000+ qubits needed</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-4 text-lg">Expert Predictions</h4>
+                <div className="space-y-3">
+                  <div className="p-3 bg-white rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">RSA-2048 Breaking:</span>
+                      <Badge className="bg-yellow-100 text-yellow-800">2030-2040</Badge>
+                    </div>
+                    <p className="text-xs text-gray-600">Conservative estimate by cryptographers</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">ECC-256 Breaking:</span>
+                      <Badge className="bg-orange-100 text-orange-800">2025-2035</Badge>
+                    </div>
+                    <p className="text-xs text-gray-600">Elliptic curve cryptography more vulnerable</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium">Migration Deadline:</span>
+                      <Badge className="bg-red-100 text-red-800">2030</Badge>
+                    </div>
+                    <p className="text-xs text-gray-600">NIST recommends completing migration by 2030</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Practical Implementation Guide */}
+        <Card className="mb-12">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-green-600" />
+              Implementing PQC in Your Organization
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-blue-600 font-bold">1</span>
+                  </div>
+                  <h4 className="font-semibold">Assessment Phase</h4>
+                </div>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Inventory all cryptographic systems</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Identify quantum-vulnerable components</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Prioritize critical data systems</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Calculate migration timeline</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-green-600 font-bold">2</span>
+                  </div>
+                  <h4 className="font-semibold">Implementation Phase</h4>
+                </div>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Deploy hybrid classical+PQC systems</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Test PQC algorithms in staging</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Train technical staff on new algorithms</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Update security policies and procedures</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-purple-600 font-bold">3</span>
+                  </div>
+                  <h4 className="font-semibold">Validation Phase</h4>
+                </div>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Conduct security audits and penetration testing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Monitor performance impact</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Verify compliance with standards</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-3 w-3 text-green-500 mt-0.5" />
+                    <span>Plan for ongoing algorithm updates</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Call to Action */}
         <Card className="text-center bg-gradient-to-r from-purple-50 to-pink-50">
           <CardContent className="p-8">

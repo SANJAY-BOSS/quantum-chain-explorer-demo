@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useBlockchain } from '../contexts/BlockchainContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Plus, FileText, Shield, CheckCircle, XCircle, Eye, QrCode, Lock, Award, Scan } from 'lucide-react';
+import { Plus, FileText, Shield, CheckCircle, XCircle, Eye, QrCode, Lock, Award, Scan, Trash2 } from 'lucide-react';
 import FileUpload from '../components/FileUpload';
 import QRCodeGenerator from '../components/QRCodeGenerator';
 import TimeLockManager from '../components/TimeLockManager';
@@ -159,6 +159,39 @@ const EnhancedDataManager = () => {
       title: "Time Lock Set",
       description: unlockTime ? `Record locked until ${unlockTime}` : `Record locked until block ${blockHeight}`,
     });
+  };
+
+  const handleDeleteRecord = async (recordId: string, recordTitle: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${recordTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('data_records')
+        .delete()
+        .eq('id', recordId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Record Deleted",
+        description: `"${recordTitle}" has been permanently deleted.`,
+      });
+
+      await loadRecords();
+    } catch (error: any) {
+      console.error('Failed to delete record:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the record",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getRecordTypeColor = (type: string) => {
@@ -363,6 +396,15 @@ const EnhancedDataManager = () => {
                             onClick={() => setShowQR(showQR === record.data_hash ? null : record.data_hash)}
                           >
                             <QrCode className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteRecord(record.id, record.title)}
+                            disabled={loading}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>

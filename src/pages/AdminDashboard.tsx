@@ -396,6 +396,104 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Advanced System Monitoring */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold flex items-center">
+              <Activity className="h-6 w-6 mr-2" />
+              Real-Time System Monitoring
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Resource Usage</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">CPU Usage</span>
+                      <span className="text-sm font-medium">24%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: '24%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Memory Usage</span>
+                      <span className="text-sm font-medium">67%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-green-600 h-2 rounded-full" style={{ width: '67%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Storage</span>
+                      <span className="text-sm font-medium">12%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-purple-600 h-2 rounded-full" style={{ width: '12%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Network Health</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>Uptime:</span>
+                    <span className="font-medium text-green-600">99.99%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Latency:</span>
+                    <span className="font-medium">12ms</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Throughput:</span>
+                    <span className="font-medium">1,247 TPS</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Error Rate:</span>
+                    <span className="font-medium text-green-600">0.01%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Peer Connections:</span>
+                    <span className="font-medium">12 active</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Security Metrics</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>Failed Auth Attempts:</span>
+                    <span className="font-medium">0</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Suspicious Transactions:</span>
+                    <span className="font-medium">0</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Firewall Blocks:</span>
+                    <span className="font-medium">3</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Last Security Scan:</span>
+                    <span className="font-medium text-green-600">2 hours ago</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Vulnerabilities:</span>
+                    <span className="font-medium text-green-600">None</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { useBlockchain } from '../contexts/BlockchainContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Plus, FileText, Shield, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Plus, FileText, Shield, CheckCircle, XCircle, Eye, Trash2 } from 'lucide-react';
 
 interface DataRecord {
   id: string;
@@ -106,6 +106,39 @@ const DataManager = () => {
       });
     } catch (error) {
       console.error('Verification failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRecord = async (recordId: string, recordTitle: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${recordTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('data_records')
+        .delete()
+        .eq('id', recordId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Record Deleted",
+        description: `"${recordTitle}" has been permanently deleted.`,
+      });
+
+      await loadRecords();
+    } catch (error: any) {
+      console.error('Failed to delete record:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the record",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -256,6 +289,15 @@ const DataManager = () => {
                         disabled={loading}
                       >
                         <Shield className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteRecord(record.id, record.title)}
+                        disabled={loading}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
