@@ -291,7 +291,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       // Generate hash of the content
-      const dataHash = calculateHash(data.content + data.title + Date.now());
+      const dataHash = await generateDataHash(data.content + data.title, state.cryptoMode);
       
       // Save to Supabase
       const { data: record, error } = await supabase

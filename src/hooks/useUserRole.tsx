@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useBlockchain } from '../contexts/BlockchainContext';
+import { supabase } from '../integrations/supabase/client';
 
 export type UserRole = 'admin' | 'user' | 'auditor';
 
@@ -9,15 +10,34 @@ export const useUserRole = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useBlockchain();
 
-  useEffect(() => {
-    if (user) {
-      // Temporary implementation - assign admin role to first user for demo
-      // This will be replaced once user_roles table is created
-      setRole('admin');
-    } else {
+  const fetchUserRole = async () => {
+    if (!user) {
       setRole('user');
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    try {
+      const { data, error } = await supabase.rpc('get_user_role', {
+        _user_id: user.id
+      });
+
+      if (error) {
+        console.error('Error fetching user role:', error);
+        setRole('user');
+      } else {
+        setRole(data || 'user');
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      setRole('user');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserRole();
   }, [user]);
 
   const hasRole = (requiredRole: UserRole): boolean => {
@@ -25,14 +45,29 @@ export const useUserRole = () => {
     return roleHierarchy[role] >= roleHierarchy[requiredRole];
   };
 
+  const assignRole = async (userId: string, newRole: UserRole) => {
+    if (!hasRole('admin')) {
+      throw new Error('Only admins can assign roles');
+    }
+
+    const { error } = await supabase
+      .from('user_roles')
+      .insert({
+        user_id: userId,
+        role: newRole,
+        assigned_by: user?.id
+      });
+
+    if (error) {
+      throw error;
+    }
+  };
+
   return { 
     role, 
     loading, 
     hasRole, 
-    refetch: () => {
-      // Placeholder refetch function
-      setLoading(true);
-      setTimeout(() => setLoading(false), 100);
-    }
+    assignRole,
+    refetch: fetchUserRole
   };
 };

@@ -1,5 +1,7 @@
 
 import { Block, Transaction } from '../types/blockchain';
+import { secureHash, generateNonce, validateTimestamp, generateSecureSignature } from './cryptoSecurity';
+import { sanitizeBlockchainData } from './inputSanitization';
 
 // Simulated post-quantum cryptographic algorithms
 const PQ_ALGORITHMS = {
@@ -14,19 +16,14 @@ const CLASSICAL_ALGORITHMS = {
   hash: 'SHA3-512',
 };
 
-// Simple hash function for demonstration (in production, use proper crypto library)
-export const calculateHash = (data: string): string => {
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return Math.abs(hash).toString(16).padStart(16, '0');
+// Enhanced secure hash function using Web Crypto API
+export const calculateHash = async (data: string): Promise<string> => {
+  const sanitizedData = typeof data === 'string' ? data : JSON.stringify(sanitizeBlockchainData(data));
+  return await secureHash(sanitizedData);
 };
 
 // Enhanced hash for block data
-export const calculateBlockHash = (block: Omit<Block, 'hash'>): string => {
+export const calculateBlockHash = async (block: Omit<Block, 'hash'>): Promise<string> => {
   const blockString = JSON.stringify({
     index: block.index,
     timestamp: block.timestamp,
@@ -35,21 +32,23 @@ export const calculateBlockHash = (block: Omit<Block, 'hash'>): string => {
     nonce: block.nonce,
     merkleRoot: block.merkleRoot,
   });
-  return calculateHash(blockString);
+  return await calculateHash(blockString);
 };
 
 // Calculate Merkle root for transactions
-export const calculateMerkleRoot = (transactions: Transaction[]): string => {
+export const calculateMerkleRoot = async (transactions: Transaction[]): Promise<string> => {
   if (transactions.length === 0) return '0';
   
-  const hashes = transactions.map(tx => calculateHash(JSON.stringify(tx)));
+  const hashes = await Promise.all(transactions.map(async tx => 
+    await calculateHash(JSON.stringify(sanitizeBlockchainData(tx)))
+  ));
   
   while (hashes.length > 1) {
     const newHashes: string[] = [];
     for (let i = 0; i < hashes.length; i += 2) {
       const left = hashes[i];
       const right = i + 1 < hashes.length ? hashes[i + 1] : left;
-      newHashes.push(calculateHash(left + right));
+      newHashes.push(await calculateHash(left + right));
     }
     hashes.splice(0, hashes.length, ...newHashes);
   }
@@ -58,21 +57,21 @@ export const calculateMerkleRoot = (transactions: Transaction[]): string => {
 };
 
 // Simulate post-quantum digital signature
-export const generatePQSignature = (data: string, cryptoMode: 'classical' | 'post-quantum'): string => {
+export const generatePQSignature = async (data: string, cryptoMode: 'classical' | 'post-quantum'): Promise<string> => {
   const algorithms = cryptoMode === 'post-quantum' ? PQ_ALGORITHMS : CLASSICAL_ALGORITHMS;
-  const signature = calculateHash(data + Date.now());
+  const signature = await generateSecureSignature(data, 'blockchain-private-key');
   return `${algorithms.digitalSignature}:${signature}`;
 };
 
 // Create genesis block
-export const createGenesisBlock = (): Block => {
+export const createGenesisBlock = async (): Promise<Block> => {
   const genesisTransaction: Transaction = {
     id: 'genesis_tx',
     timestamp: Date.now(),
     sender: 'System',
-    dataHash: calculateHash('Genesis Block'),
+    dataHash: await calculateHash('Genesis Block'),
     data: 'Genesis Block - Quantum-Resistant Blockchain Initialized',
-    signature: generatePQSignature('genesis', 'post-quantum'),
+    signature: await generatePQSignature('genesis', 'post-quantum'),
     cryptoAlgorithm: PQ_ALGORITHMS.digitalSignature,
   };
 
@@ -82,7 +81,7 @@ export const createGenesisBlock = (): Block => {
     transactions: [genesisTransaction],
     previousHash: '0',
     nonce: 0,
-    merkleRoot: calculateMerkleRoot([genesisTransaction]),
+    merkleRoot: await calculateMerkleRoot([genesisTransaction]),
     validator: 'Genesis Validator',
     consensusAlgorithm: 'Proof of Stake (PQC)',
     cryptoMode: 'post-quantum',
@@ -90,16 +89,16 @@ export const createGenesisBlock = (): Block => {
 
   return {
     ...block,
-    hash: calculateBlockHash(block),
+    hash: await calculateBlockHash(block),
   };
 };
 
 // Create new block with proof-of-work simulation
-export const createNewBlock = (
+export const createNewBlock = async (
   previousBlock: Block,
   transactions: Transaction[],
   cryptoMode: 'classical' | 'post-quantum'
-): Block => {
+): Promise<Block> => {
   let nonce = 0;
   const algorithms = cryptoMode === 'post-quantum' ? PQ_ALGORITHMS : CLASSICAL_ALGORITHMS;
   
@@ -109,17 +108,17 @@ export const createNewBlock = (
     transactions,
     previousHash: previousBlock.hash,
     nonce,
-    merkleRoot: calculateMerkleRoot(transactions),
+    merkleRoot: await calculateMerkleRoot(transactions),
     validator: `PQ-Validator-${Math.floor(Math.random() * 1000)}`,
     consensusAlgorithm: cryptoMode === 'post-quantum' ? 'BFT-PQC' : 'Proof of Work',
     cryptoMode,
   };
 
   // Simulate mining with difficulty (hash must start with '00')
-  let hash = calculateBlockHash({ ...block, nonce });
+  let hash = await calculateBlockHash({ ...block, nonce });
   while (!hash.startsWith('00')) {
     nonce++;
-    hash = calculateBlockHash({ ...block, nonce });
+    hash = await calculateBlockHash({ ...block, nonce });
   }
 
   return {
@@ -130,13 +129,13 @@ export const createNewBlock = (
 };
 
 // Verify blockchain integrity
-export const verifyBlockchain = (blockchain: Block[]): boolean => {
+export const verifyBlockchain = async (blockchain: Block[]): Promise<boolean> => {
   for (let i = 1; i < blockchain.length; i++) {
     const currentBlock = blockchain[i];
     const previousBlock = blockchain[i - 1];
 
     // Verify current block hash
-    const recalculatedHash = calculateBlockHash({
+    const recalculatedHash = await calculateBlockHash({
       index: currentBlock.index,
       timestamp: currentBlock.timestamp,
       transactions: currentBlock.transactions,
@@ -161,8 +160,8 @@ export const verifyBlockchain = (blockchain: Block[]): boolean => {
 };
 
 // Generate secure data hash
-export const generateDataHash = (data: string, cryptoMode: 'classical' | 'post-quantum'): string => {
+export const generateDataHash = async (data: string, cryptoMode: 'classical' | 'post-quantum'): Promise<string> => {
   const algorithms = cryptoMode === 'post-quantum' ? PQ_ALGORITHMS : CLASSICAL_ALGORITHMS;
-  const hash = calculateHash(data + Date.now());
+  const hash = await calculateHash(data + Date.now());
   return `${algorithms.hash}:${hash}`;
 };

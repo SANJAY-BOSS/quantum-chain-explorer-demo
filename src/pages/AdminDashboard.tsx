@@ -8,11 +8,38 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { useBlockchain } from '../contexts/BlockchainContext';
 import { verifyBlockchain } from '../utils/blockchain';
+import { useUserRole } from '@/hooks/useUserRole';
+import RoleManager from '@/components/RoleManager';
 
 const AdminDashboard = () => {
   const [autoMining, setAutoMining] = useState(true);
   const { state, mineBlock, resetChain, toggleCryptoMode } = useBlockchain();
   const { toast } = useToast();
+  const { hasRole, loading: roleLoading } = useUserRole();
+
+  if (roleLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!hasRole('admin')) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <Shield className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <h2 className="text-2xl font-bold mb-2">Access Denied</h2>
+              <p className="text-muted-foreground">You don't have permission to access this page.</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Add safety checks for blockchain state
   if (!state || !state.chain || !Array.isArray(state.chain)) {
@@ -145,6 +172,11 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Role Management Section */}
+        <div className="mb-8">
+          <RoleManager />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
