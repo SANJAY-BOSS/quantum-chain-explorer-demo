@@ -13,17 +13,6 @@ const Explorer = () => {
   const [selectedBlock, setSelectedBlock] = useState<Block | null>(null);
   const [expandedTransaction, setExpandedTransaction] = useState<string | null>(null);
 
-  // Add safety check for state
-  if (!state || !state.chain) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p>Loading blockchain data...</p>
-        </div>
-      </div>
-    );
-  }
-
   const formatTimestamp = (timestamp: number) => {
     return new Date(timestamp).toLocaleString();
   };
@@ -208,7 +197,7 @@ const Explorer = () => {
         </div>
 
         {/* Pending Transactions */}
-        {(state.pendingTransactions || []).length > 0 && (
+        {state.pendingTransactions.length > 0 && (
           <Card className="mb-8 bg-yellow-50 border-yellow-200">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-yellow-800 flex items-center">
@@ -218,7 +207,7 @@ const Explorer = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {(state.pendingTransactions || []).length > 0 ? state.pendingTransactions.map((tx) => (
+                {state.pendingTransactions.map((tx) => (
                   <div key={tx.id} className="bg-white p-4 rounded-lg border">
                     <div className="flex justify-between items-center">
                       <span className="font-mono text-sm">{formatHash(tx.id)}</span>
@@ -228,11 +217,7 @@ const Explorer = () => {
                       From: {tx.sender} | Data: {formatHash(tx.dataHash)}
                     </p>
                   </div>
-                )) : (
-                  <div className="text-center py-4 text-gray-500">
-                    <p>No pending transactions</p>
-                  </div>
-                )}
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -355,7 +340,7 @@ const Explorer = () => {
             </CardHeader>
             <CardContent className="max-h-96 overflow-y-auto">
               <div className="space-y-4">
-                {(state.chain || []).length > 0 ? [...state.chain].reverse().map((block) => (
+                {[...state.chain].reverse().map((block) => (
                   <div
                     key={block.index}
                     className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
@@ -376,15 +361,11 @@ const Explorer = () => {
                     </div>
                     <div className="space-y-1 text-sm">
                       <p><span className="text-gray-500">Hash:</span> <span className="font-mono">{formatHash(block.hash)}</span></p>
-                      <p><span className="text-gray-500">Transactions:</span> {block.transactions?.length || 0}</p>
+                      <p><span className="text-gray-500">Transactions:</span> {block.transactions.length}</p>
                       <p><span className="text-gray-500">Validator:</span> {block.validator}</p>
                     </div>
                   </div>
-                )) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No blocks available. Loading blockchain...</p>
-                  </div>
-                )}
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -444,7 +425,7 @@ const Explorer = () => {
                       Transactions ({selectedBlock.transactions.length})
                     </h4>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
-                      {(selectedBlock.transactions || []).map((tx) => (
+                      {selectedBlock.transactions.map((tx) => (
                         <div key={tx.id} className="border rounded-lg p-3">
                           <div className="flex justify-between items-center mb-2">
                             <span className="font-mono text-sm">{formatHash(tx.id)}</span>
