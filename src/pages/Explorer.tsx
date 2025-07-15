@@ -17,7 +17,8 @@ const Explorer = () => {
     return new Date(timestamp).toLocaleString();
   };
 
-  const formatHash = (hash: string, length = 16) => {
+  const formatHash = (hash: string | undefined, length = 16) => {
+    if (!hash || typeof hash !== 'string') return 'N/A';
     return `${hash.substring(0, length)}...`;
   };
 

@@ -44,24 +44,22 @@ const blockchainReducer = (state: BlockchainState, action: BlockchainAction): Bl
     case 'MINE_BLOCK':
       if (state.pendingTransactions.length === 0) return state;
       
-      const newBlock = createNewBlock(
-        state.chain[state.chain.length - 1],
-        state.pendingTransactions,
-        state.cryptoMode
-      );
+      // Note: This should be handled async but keeping sync for now
+      // to maintain compatibility with the reducer pattern
+      const newBlock = state.chain[state.chain.length - 1];
       
       return {
         ...state,
-        chain: [...state.chain, newBlock],
-        pendingTransactions: [],
+        chain: state.chain, // Will be updated by async mine function
+        pendingTransactions: [], // Clear pending transactions
         totalBlocks: state.totalBlocks + 1,
         isMining: false,
       };
     
     case 'RESET_CHAIN':
-      const genesisBlock = createGenesisBlock();
+      // Note: Genesis block creation is async, handled in the resetChain function
       return {
-        chain: [genesisBlock],
+        chain: state.chain, // Will be updated by async function
         pendingTransactions: [],
         cryptoMode: 'post-quantum',
         totalBlocks: 1,
@@ -90,10 +88,10 @@ const blockchainReducer = (state: BlockchainState, action: BlockchainAction): Bl
 };
 
 const initialState: BlockchainState = {
-  chain: [createGenesisBlock()],
+  chain: [], // Will be initialized async
   pendingTransactions: [],
   cryptoMode: 'post-quantum',
-  totalBlocks: 1,
+  totalBlocks: 0,
   totalTransactions: 0,
   isMining: false,
 };
@@ -103,8 +101,9 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = React.useState<any>(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
-  // Load blockchain state from Supabase on mount
+  // Initialize blockchain and load state from Supabase
   useEffect(() => {
+    initializeBlockchain();
     loadBlockchainState();
     
     // Set up auth state listener
@@ -121,6 +120,15 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const initializeBlockchain = async () => {
+    try {
+      const genesisBlock = await createGenesisBlock();
+      dispatch({ type: 'LOAD_STATE', payload: { ...initialState, chain: [genesisBlock], totalBlocks: 1 } });
+    } catch (error) {
+      console.error('Failed to initialize blockchain:', error);
+    }
+  };
 
   // Save blockchain state to Supabase whenever it changes
   useEffect(() => {
@@ -209,14 +217,30 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: 'SET_MINING', payload: true });
       
       setTimeout(async () => {
-        dispatch({ type: 'MINE_BLOCK' });
-        
-        // Log audit trail
-        if (user) {
-          await logAuditEvent('mine_block', null, null, { 
-            block_index: state.chain.length,
-            transactions_count: state.pendingTransactions.length 
-          }, true);
+        try {
+          const previousBlock = state.chain[state.chain.length - 1];
+          const newBlock = await createNewBlock(previousBlock, state.pendingTransactions, state.cryptoMode);
+          
+          // Update state with new block
+          dispatch({ type: 'LOAD_STATE', payload: {
+            ...state,
+            chain: [...state.chain, newBlock],
+            pendingTransactions: [],
+            totalBlocks: state.totalBlocks + 1,
+            totalTransactions: state.totalTransactions + state.pendingTransactions.length,
+            isMining: false,
+          }});
+          
+          // Log audit trail
+          if (user) {
+            await logAuditEvent('mine_block', null, null, { 
+              block_index: state.chain.length,
+              transactions_count: state.pendingTransactions.length 
+            }, true);
+          }
+        } catch (error) {
+          console.error('Mining failed:', error);
+          dispatch({ type: 'SET_MINING', payload: false });
         }
       }, 2000);
     }
@@ -231,7 +255,19 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetChain = async () => {
-    dispatch({ type: 'RESET_CHAIN' });
+    try {
+      const genesisBlock = await createGenesisBlock();
+      dispatch({ type: 'LOAD_STATE', payload: {
+        chain: [genesisBlock],
+        pendingTransactions: [],
+        cryptoMode: 'post-quantum',
+        totalBlocks: 1,
+        totalTransactions: 0,
+        isMining: false,
+      }});
+    } catch (error) {
+      console.error('Failed to reset chain:', error);
+    }
     
     // Clear blockchain state in database
     try {
@@ -291,7 +327,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       // Generate hash of the content
-      const dataHash = await generateDataHash(data.content + data.title, state.cryptoMode);
+      const dataHash = await calculateHash(data.content + data.title + Date.now());
       
       // Save to Supabase
       const { data: record, error } = await supabase

@@ -45,10 +45,10 @@ const SubmitData = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Generate data hash using current crypto mode
-      const dataHash = generateDataHash(formData.data, state.cryptoMode);
+      const dataHash = await generateDataHash(formData.data, state.cryptoMode);
       
       // Generate signature
-      const signature = generatePQSignature(formData.data + formData.sender, state.cryptoMode);
+      const signature = await generatePQSignature(formData.data + formData.sender, state.cryptoMode);
       
       // Get crypto algorithm based on current mode
       const cryptoAlgorithm = state.cryptoMode === 'post-quantum' 

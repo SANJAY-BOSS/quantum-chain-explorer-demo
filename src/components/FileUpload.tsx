@@ -36,7 +36,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileProcessed }) => {
         const fileContent = await readFileAsText(file);
         
         // Generate hash
-        const fileHash = calculateHash(fileContent + file.name + file.size);
+        const fileHash = await calculateHash(fileContent + file.name + file.size);
         
         // Add to blockchain
         await addTransaction({
