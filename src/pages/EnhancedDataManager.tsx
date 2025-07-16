@@ -19,6 +19,8 @@ import TimeLockManager from '../components/TimeLockManager';
 import TamperDetectionSystem from '../components/TamperDetectionSystem';
 import CertificateGenerator from '../components/CertificateGenerator';
 import QRHashScanner from '../components/QRHashScanner';
+import DigitalSignature from '../components/DigitalSignature';
+import ComplianceDashboard from '../components/ComplianceDashboard';
 
 interface DataRecord {
   id: string;
