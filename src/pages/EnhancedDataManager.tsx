@@ -231,7 +231,7 @@ const EnhancedDataManager = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="records" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Records
@@ -255,6 +255,14 @@ const EnhancedDataManager = () => {
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Upload
+            </TabsTrigger>
+            <TabsTrigger value="signatures" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Signatures
+            </TabsTrigger>
+            <TabsTrigger value="compliance" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Compliance
             </TabsTrigger>
           </TabsList>
 
@@ -460,6 +468,14 @@ const EnhancedDataManager = () => {
 
           <TabsContent value="upload">
             <FileUpload onFileProcessed={handleFileProcessed} />
+          </TabsContent>
+
+          <TabsContent value="signatures">
+            <DigitalSignature />
+          </TabsContent>
+
+          <TabsContent value="compliance">
+            <ComplianceDashboard />
           </TabsContent>
         </Tabs>
       </div>
